@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>English Chat Master</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--choc:#6b4132;--choc2:#8a5a47;--pink:#ffe3ea;--pink2:#ffc9d8;--mint:#d4f3e2;--mint2:#9fdcbc;--ink:#4a2c22;--glass:rgba(255,255,255,.62);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{height:100%}
+body{margin:0;height:100%;font-family:'Quicksand',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink);background:linear-gradient(160deg,#ffeaf0,#ffd3e0 55%,#fff0f4);overflow:hidden}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+#stars span{position:absolute;opacity:.45;animation:tw 4s ease-in-out infinite}
+@keyframes tw{50%{transform:scale(1.3) rotate(15deg);opacity:.8}}
+#app{position:relative;z-index:1;max-width:480px;height:100%;margin:0 auto;display:flex;flex-direction:column}
+.scr{display:none;flex:1;min-height:0;flex-direction:column}.scr.on{display:flex}
+.glass{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,.85);box-shadow:0 6px 20px rgba(107,65,50,.12)}
+h1{font-size:26px;margin:0;color:var(--choc);text-align:center}
+.sub{text-align:center;margin:4px 16px 14px;font-size:14px;color:var(--choc2)}
+#menu{padding:22px 14px 14px;overflow:auto}
+.card{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;color:var(--ink);padding:14px;margin-bottom:11px;border-radius:22px;cursor:pointer;transition:transform .15s}
+.card:hover{transform:translateY(-2px)}
+.card .em{font-size:30px;background:var(--pink2);border-radius:16px;width:54px;height:54px;display:grid;place-items:center;flex:none}
+.card b{display:block;font-size:16px;color:var(--choc)}.card small{font-size:12.5px;color:var(--choc2)}
+#top{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:0 0 22px 22px}
+#top button{border:0;background:none;font-size:22px;color:var(--choc);cursor:pointer}
+.av{width:40px;height:40px;border-radius:50%;background:var(--pink2);display:grid;place-items:center;font-size:22px}
+#nm{font-weight:700;color:var(--choc);line-height:1.1}#nm small{display:block;font-weight:500;font-size:11px;color:#4a9a72}
+#sc{margin-left:auto;background:var(--choc);color:#fff;border-radius:99px;padding:5px 12px;font-weight:700;font-size:14px}
+#msgs{flex:1;overflow:auto;padding:14px 12px 6px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:80%;padding:10px 14px;border-radius:20px;font-size:15.5px;line-height:1.35;animation:pop .25s ease;word-wrap:break-word}
+@keyframes pop{from{transform:scale(.85);opacity:0}}
+.bot{align-self:flex-start;background:var(--mint);border:1.5px solid var(--mint2);border-bottom-left-radius:6px}
+.usr{align-self:flex-end;background:var(--choc);color:#fff;border-bottom-right-radius:6px}
+.fb{align-self:flex-end;max-width:88%;background:rgba(212,243,226,.85);border:1.5px dashed #5fbf8d;border-radius:16px;padding:8px 12px;font-size:13px;color:#2f6b4c}
+.fb.bad{background:rgba(255,236,200,.9);border-color:#e8b45c;color:#7a5316}
+.fb b{float:right;margin-left:8px;color:var(--choc)}
+.typing{align-self:flex-start;background:var(--mint);border-radius:18px;padding:10px 16px;letter-spacing:3px;color:#4a9a72}
+.typing i{animation:bl 1s infinite;font-style:normal}.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes bl{50%{opacity:.2}}
+#hint{margin:0 10px 6px;border-radius:20px;overflow:hidden}
+#ht{width:100%;border:0;background:none;font:inherit;font-weight:700;color:var(--choc);padding:9px 14px;text-align:left;cursor:pointer;display:flex;justify-content:space-between}
+#hb{display:none;padding:0 14px 12px;font-size:13.5px}
+#hint.open #hb{display:block}#hint.open #ar{transform:rotate(180deg)}
+#hint.new{animation:glow 1s}
+@keyframes glow{40%{box-shadow:0 0 0 4px var(--pink2)}}
+#chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{border:1.5px solid var(--choc2);background:#fff;color:var(--choc);font:inherit;font-size:13px;font-weight:600;border-radius:99px;padding:6px 12px;cursor:pointer;text-align:left}
+.chip:hover{background:var(--pink)}
+#bar{display:flex;gap:8px;padding:6px 10px 12px}
+#inp{flex:1;border:1.5px solid var(--pink2);background:rgba(255,255,255,.9);border-radius:99px;padding:12px 16px;font:inherit;font-size:16px;color:var(--ink);outline:none}
+#inp:focus{border-color:var(--choc2)}
+#go{border:0;background:var(--choc);color:#fff;width:46px;height:46px;border-radius:50%;font-size:20px;cursor:pointer}
+#go:disabled,#inp:disabled{opacity:.5}
+#res{padding:22px 16px;overflow:auto;text-align:center}
+#res .big{font-size:46px;margin:6px 0}#res .pts{font-size:34px;font-weight:700;color:var(--choc)}
+#ck{border-radius:22px;padding:14px 18px;margin:14px 0;text-align:left;font-size:14.5px}
+#ck div{padding:4px 0}
+.btn{border:0;background:var(--choc);color:#fff;font:inherit;font-weight:700;border-radius:99px;padding:12px 26px;cursor:pointer;margin:4px}
+.btn.alt{background:#fff;color:var(--choc);border:1.5px solid var(--choc)}
+#pin{flex:1;overflow:auto;padding:20px 14px;text-align:center}
+#mis{border-radius:22px;padding:12px 16px;margin:0 0 12px;text-align:left;font-size:14.5px}
+#ms{display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px 0;font-size:12px}
+.gl{padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.7);border:1.5px solid var(--pink2);color:var(--choc2);font-weight:700}
+.gl.ok{background:var(--mint);border-color:var(--mint2);color:#2f6b4c}
+#pl{border-radius:22px;padding:6px 16px;margin:0 0 16px;text-align:left}
+.ph{padding:9px 0;border-bottom:1px dashed var(--pink2)}.ph:last-child{border:0}
+.ph b{display:block;color:var(--choc)}.ph span{font-size:13px;color:var(--choc2)}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div id="app">
+ <section class="scr on" id="menu">
+  <h1>💌 English Chat Master</h1>
+  <p class="sub">Выбери чат и отвечай по-английски — сам, своими словами ✨</p>
+  <div id="list"></div>
+ </section>
+ <section class="scr" id="chat">
+  <div id="top" class="glass"><button id="back" aria-label="Назад">‹</button><div class="av" id="av"></div><div id="nm"></div><div id="sc">⭐ 0</div></div>
+  <div id="ms"></div><div id="msgs"></div>
+  <div id="hint" class="glass"><button id="ht"><span>💡 Нужна подсказка? Нажми, если застряла</span><span id="ar">▾</span></button><div id="hb"><div id="hp"></div><div id="chips"></div></div></div>
+  <div id="bar"><input id="inp" placeholder="Напиши ответ по-английски…" autocomplete="off" enterkeyhint="send"><button id="go" aria-label="Отправить">➤</button></div>
+ </section>
+ <section class="scr" id="pre"><div id="pin"><h1 id="pt"></h1><p class="sub">📖 Перед началом посмотри полезные фразы. Использовать их необязательно: отвечай своими словами, как умеешь. Если застрянешь — нажми «💡». Фразы из словарика отметятся в итоговом чеклисте.</p><div id="mis" class="glass"></div><div id="pl" class="glass"></div><button class="btn" id="begin">Начать чат 💌</button><button class="btn alt" id="pback">Назад</button></div></section>
+ <section class="scr" id="res">
+  <div class="big" id="stz"></div><h1>Готово! 🎀</h1>
+  <div class="pts" id="tot"></div><p class="sub" id="msg"></p>
+  <div id="ck" class="glass"></div>
+  <button class="btn" id="again">Ещё раз 🔄</button><button class="btn alt" id="home">В меню</button>
+ </section>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const SC=[
+{e:"💔",t:"Bestie Needs Help",d:"Поддержи подругу в трудный момент",n:"Lily",a:"👧",G:[{id:'sup',l:'Поддержать подругу',k:/sorry|hard on yourself|did your best|not stupid|smart|here for you|everyone|better/},{id:'meet',l:'Предложить встречу',k:/meet|hang out|come over|see you|visit|together/,a:'Yes, I’d love that! 🥹'},{id:'time',l:'Назвать время',k:/\d|\bpm\b|\bam\b|after school|tonight|o.?clock|noon|evening|morning|afternoon/,a:'That time works for me! ⏰'}],steps:[
+ {b:"Hey… I failed my math test 😭 I feel so bad.",h:"Посочувствуй подруге: <b>I’m sorry to hear that</b> / <b>Oh no!</b>",c:["Oh no, I’m so sorry to hear that!","That’s so sad. Are you okay?"],r:[{k:/sorry|oh no|sad|okay|ok\b/,p:3,ph:"I’m sorry to hear that",f:"Отлично! Ты сразу показала сочувствие 💗"}]},
+ {b:"Thanks… I studied all night but I just froze. I don’t know what to do.",h:"Поддержи: <b>Don’t be so hard on yourself</b> / <b>You did your best</b>",c:["Don’t be so hard on yourself. You did your best.","I’m sure you’ll do better next time."],r:[{k:/hard on yourself|did your best|next time|sure|will do better/,p:3,ph:"Don’t be so hard on yourself",f:"Супер поддержка! Фраза с «hard on yourself» очень естественная ✨"}]},
+ {b:"Maybe I’m just stupid 😞",h:"Мягко возрази: <b>You’re not stupid!</b> / <b>You’re so smart</b>",c:["You’re not stupid! You’re really smart.","Everyone fails sometimes."],r:[{k:/not stupid|smart|clever|everyone|sometimes/,p:3,ph:"You’re not stupid!",f:"Прекрасно! Именно так поддерживают друзей 🌸"}]},
+ {g:'meet',q:'Can we meet? I’d feel so much better 🥺',b:"Thank you. I just want to talk to someone…",h:"Предложи помощь или встречу: <b>Do you want to meet?</b> / <b>I’m here for you</b> / <b>I can help you</b>",c:["Do you want to meet today? I can help you study.","I’m here for you. Let’s hang out tomorrow!"],r:[{k:/meet|hang out|come over|see you|today|tomorrow|right now/,p:3,ph:"Do you want to meet?",f:"Ты предложила встретиться — отлично! Бот подстроился 💫",re:"Yes please!! Can you come over right now? 🥹",go:5},{k:/help|here for you|listen|talk/,p:3,ph:"I’m here for you",f:"Тёплая фраза! «I’m here for you» — must have для друзей 💗"}]},
+ {g:'time',q:'Sorry, what time works for you? 🕓',b:"So… when are you free? 🕓",h:"Назови время: <b>How about 4 pm?</b> / <b>I’m free after school</b>",c:["How about 4 pm?","I’m free after school. See you at my place!"],r:[{k:/\d|pm|am|after school|tonight|today|tomorrow|how about|free/,p:3,ph:"How about 4 pm?",f:"Чётко и понятно! Хорошая договорённость 🕓"}]},
+ {b:"You’re the best friend ever 💗 See you soon!",h:"Попрощайся: <b>See you soon!</b> / <b>Take care!</b>",c:["See you soon! Take care!","Love you! Everything will be okay."],end:1,r:[{k:/see you|take care|love|bye|okay|ok/,p:3,ph:"Take care!",f:"Милое завершение 🎀"}]}
+]},
+{e:"🛍️",t:"Online Shop Crisis",d:"Проблема с заказом: замена или возврат",n:"Pretty Shop Support",a:"🛍️",G:[{id:'prob',l:'Описать проблему',k:/small|big|large|wrong|damaged|broken|tight|too short|too long|colou?r|size/},{id:'num',l:'Назвать номер заказа',k:/\d{3,}|number/,a:'Got it, thank you! 📦'},{id:'fix',l:'Замена или возврат',k:/refund|money back|replace|exchange/},{id:'refund',k:/refund|money back/,a:'No problem! We’ll send your money back in 3–5 days. 💸'},{id:'sz',o:1,k:/\b(xs|s|m|l|xl)\b|small|medium|large|larger|bigger/}],steps:[
+ {b:"Hello! Welcome to Pretty Shop 🛍️ How can I help you?",h:"Скажи, что у тебя проблема: <b>I have a problem with my order</b>",c:["Hi! I have a problem with my order.","Hello, I ordered a dress but it’s the wrong size."],r:[{k:/size|small|big|large/,p:3,ph:"It’s the wrong size",f:"Ты сразу назвала проблему — это экономит время 👏",re:"Oh, a size problem — I’m so sorry! Let’s fix it.",go:2},{k:/problem|order|wrong|broken|issue|help/,p:3,ph:"I have a problem with my order",f:"Отлично! Вежливо и по делу 💗"}]},
+ {g:'prob',q:'Sorry, what exactly is wrong with it?',b:"I’m sorry about that! What’s the problem exactly?",h:"Объясни: <b>It’s too small</b> / <b>I got the wrong colour</b> / <b>It’s damaged</b>",c:["The dress is too small for me.","I got the wrong colour. I ordered pink!"],r:[{k:/small|big|large|wrong|colou?r|damaged|broken|tight|short|long/,p:3,ph:"It’s too small",f:"Хорошо описала проблему! 👍"}]},
+ {g:'num',q:'Could you tell me your order number? 📦',b:"I see. What’s your order number?",h:"Назови номер: <b>My order number is…</b>",c:["My order number is 4821.","It’s 12345."],r:[{k:/\d|number/,p:3,ph:"My order number is…",f:"Верно! Так называют номер заказа 📦"}]},
+ {g:'fix',q:'Would you like a replacement or a refund? 💸',b:"Thank you! Would you like a replacement or a refund?",h:"Выбери: <b>I’d like a replacement</b> / <b>a refund, please</b>",c:["I’d like a replacement, please.","I want a refund, please."],r:[{k:/refund|money back/,p:3,ph:"I’d like a refund, please",f:"Вежливая просьба, молодец! 💸",re:"No problem! We’ll send your money back in 3–5 days.",go:5},{k:/replace|exchange|another|different/,p:3,ph:"I’d like a replacement",f:"Отлично! «I’d like…» звучит вежливо ✨"}]},
+ {g:'sz',sk:'refund',q:'And which size would you like? 👗',b:"Which size do you need?",h:"Назови размер: <b>Size M, please</b>",c:["Size M, please.","Could I have a larger size, please?"],r:[{k:/\b(xs|s|m|l|xl|small|medium|large|larger|bigger)\b|size/,p:3,ph:"Could I have a larger size?",f:"Супер! «Could I have…?» — вежливый вопрос 🌸"}]},
+ {b:"All done! Anything else I can help you with?",h:"Поблагодари: <b>Thank you so much!</b> / <b>That’s all</b>",c:["Thank you so much! That’s all.","No, thanks. Have a nice day!"],end:1,r:[{k:/thank|that.?s all|no|nice day|bye/,p:3,ph:"Thank you so much!",f:"Вежливо до конца! 💝"}]}
+]},
+{e:"👗",t:"Weekend & Party Outfit",d:"Планы на выходные и выбор образа",n:"Mia",a:"🎀",G:[{id:'place',l:'Выбрать место',k:/mall|caf|park|cinema|restaurant|beach|your house|my house|shopping|go to/,a:'Great idea, I love that place! 🛍️'},{id:'time',l:'Назвать время',k:/\d|\bpm\b|\bam\b|o.?clock|noon|evening|morning|afternoon/,a:'That time works for me! 🕕'},{id:'wear',l:'Описать аутфит',k:/wear|dress|skirt|jeans|hoodie|sneakers|shoes|top\b/,a:'Omg that sounds so cute! 🥰'}],steps:[
+ {b:"Hii! What are your plans for the weekend? 🎀",h:"Расскажи о планах: <b>I’m going to…</b> / <b>I’d like to…</b>",c:["I’m going to a party on Saturday!","I don’t have any plans. Let’s do something!"],r:[{k:/going|plan|party|let.?s|want|like to|would like/,p:3,ph:"I’m going to…",f:"Отлично! «I’m going to» — для планов 🎉"}]},
+ {g:'place',q:'Okay! But where should we go? 🤔',b:"Let’s meet! Where should we go?",h:"Предложи место: <b>How about the mall / a café / the park?</b>",c:["How about the mall?","Let’s go to a café near my house."],r:[{k:/how about|mall|caf|park|cinema|let.?s|go to|shopping/,p:3,ph:"How about…?",f:"Классное предложение! «How about…?» — супер-фраза 🛍️"}]},
+ {g:'time',q:'And what time works for you? 🕔',b:"Sounds great! What time works for you?",h:"Время: <b>Let’s meet at 5 pm</b>",c:["Let’s meet at 5 pm.","How about two o’clock in the afternoon?"],r:[{k:/\d|pm|am|morning|afternoon|evening|noon|o.?clock/,p:3,ph:"Let’s meet at…",f:"Чётко! Время названо правильно 🕔"}]},
+ {g:'wear',q:'So… what are you going to wear? 👗',b:"Perfect! What are you going to wear? 👗",h:"Опиши образ: <b>I’m going to wear…</b> (dress, skirt, jeans, hoodie)",c:["I’m going to wear my pink dress.","I think I’ll wear white sneakers and jeans."],r:[{k:/wear|dress|skirt|jeans|top|shoes|sneakers|hoodie|shirt|boots/,p:3,ph:"I’m going to wear…",f:"Очень стильно! 👗✨"}]},
+ {b:"Omg cute! I’ll wear black jeans and a white top. Do you like it?",h:"Сделай комплимент: <b>That sounds so cute!</b> / <b>It suits you</b>",c:["That sounds so cute!","I love it! It really suits you."],r:[{k:/cute|suit|love|like|nice|pretty|great|beautiful|cool|amazing/,p:3,ph:"That sounds so cute!",f:"Комплименты — лучший друг переписки 💕"}]},
+ {b:"Thanks! See you on Saturday! 💕",h:"Попрощайся: <b>Can’t wait!</b> / <b>See you!</b>",c:["Can’t wait! See you!","See you on Saturday! Bye!"],end:1,r:[{k:/see you|wait|bye|saturday/,p:3,ph:"Can’t wait!",f:"Прекрасный финал! 🌸"}]}
+]},
+{e:"☕",t:"Spilling the Tea",d:"Сплетни, эмоции и яркие реакции",n:"Zoe",a:"🍵",G:[{id:'spill',l:'Попросить рассказать',k:/spill|tell me|what happened|go on/},{id:'react',l:'Отреагировать',k:/no way|seriously|kidding|really|omg|wow|crazy|believe|shocked/},{id:'promise',l:'Пообещать молчать',k:/sealed|promise|won.?t tell|secret|zip/,a:'Thank you!! I trust you 🤍'},{id:'advice',l:'Предложить совет',k:/should|let.?s|support|talk to|there for/}],steps:[
+ {g:'spill',q:'So… do you want to hear it? 👀',b:"OMG I have SO much tea for you 🍵",h:"Попроси рассказать: <b>Spill the tea!</b> / <b>Tell me everything!</b>",c:["Spill the tea!","Tell me everything! What happened?"],r:[{k:/spill|tell me|what happened|what is it|go on/,p:3,ph:"Spill the tea!",f:"Идеально! Именно так говорят подростки 🍵"}]},
+ {b:"Okay, so Emma and Jake broke up yesterday!!",h:"Удивись: <b>No way!</b> / <b>Seriously?</b> / <b>Are you kidding me?</b>",c:["No way! Seriously?","Are you kidding me?! They looked so happy!"],r:[{k:/no way|seriously|kidding|really|omg|wow|shut up/,p:3,ph:"No way!",f:"Яркая реакция! «No way!» — классика 😱"}]},
+ {b:"Yes! And you won’t believe it — he’s dating Mia now 😱",h:"Выскажи эмоцию: <b>That’s crazy!</b> / <b>I can’t believe it!</b>",c:["That’s crazy! I can’t believe it!","Poor Emma! That’s so unfair."],r:[{k:/crazy|believe|shocked|wild|poor|unfair|sad|awful|insane/,p:3,ph:"I can’t believe it!",f:"Эмоционально и естественно! 💥"}]},
+ {g:'promise',q:'So… can you keep a secret? 🤫',b:"Right?? But please don’t tell anyone. Can you keep a secret?",h:"Пообещай: <b>My lips are sealed!</b> / <b>I promise</b>",c:["My lips are sealed!","I promise. I won’t tell anyone."],r:[{k:/sealed|promise|secret|won.?t tell|don.?t worry|zip/,p:3,ph:"My lips are sealed!",f:"Ты использовала идиому — это уровень B1+! 🤐💗"}]},
+ {g:'advice',q:'What should we do about Emma? 🤔',b:"Thanks! You’re the best. Should we talk to Emma?",h:"Посоветуй: <b>I think we should be there for her</b>",c:["I think we should be there for her.","Yes, let’s support her. She needs us."],r:[{k:/support|there for|talk|should|think|help|let.?s|need/,p:3,ph:"I think we should…",f:"Мудрый совет! «I think we should…» — ключевая конструкция 🌷"}]},
+ {b:"Good idea 💗 Love you, bestie!",h:"Попрощайся: <b>Love you too!</b> / <b>Talk later!</b>",c:["Love you too! Talk later!","Thanks for the tea! Bye!"],end:1,r:[{k:/love|talk later|bye|thanks|see you/,p:3,ph:"Talk later!",f:"Милый финал! ☕"}]}
+]}];
+let sc,cur,score,got,locked,n,done,tries;
+const M=$('#msgs'),inp=$('#inp');
+// background stars
+$('#stars').innerHTML=Array.from({length:22},(_,i)=>`<span style="left:${(i*37)%96}%;top:${(i*53)%94}%;font-size:${12+(i%4)*5}px;animation-delay:${(i%6)*.6}s">${['✨','⭐','🎀','🤍','🌸'][i%5]}</span>`).join('');
+$('#list').innerHTML=SC.map((s,i)=>`<button class="card glass" data-i="${i}"><span class="em">${s.e}</span><span><b>${s.t}</b><small>${s.d}</small></span></button>`).join('');
+$('#list').onclick=e=>{const b=e.target.closest('.card');if(b)start(+b.dataset.i)};
+function scr(id){document.querySelectorAll('.scr').forEach(x=>x.classList.toggle('on',x.id===id))}
+function add(c,h){const d=document.createElement('div');d.className=c;d.textContent=h;M.appendChild(d);M.scrollTop=M.scrollHeight;return d}
+function typing(){const d=document.createElement('div');d.className='typing';d.innerHTML='<i>●</i><i>●</i><i>●</i>';M.appendChild(d);M.scrollTop=M.scrollHeight;return d}
+function lock(v){locked=v;inp.disabled=v;$('#go').disabled=v;if(!v)inp.focus({preventScroll:true})}
+const TR={"I’m sorry to hear that":"Мне жаль это слышать","Don’t be so hard on yourself":"Не будь к себе так строга","You’re not stupid!":"Ты не глупая!","Do you want to meet?":"Хочешь встретиться?","I’m here for you":"Я рядом, я с тобой","How about 4 pm?":"Как насчёт 4 часов дня?","Take care!":"Береги себя!","It’s the wrong size":"Это не тот размер","I have a problem with my order":"У меня проблема с заказом","It’s too small":"Он слишком маленький","My order number is…":"Номер моего заказа…","I’d like a refund, please":"Я хочу возврат денег, пожалуйста","I’d like a replacement":"Я хочу замену","Could I have a larger size?":"Можно размер побольше?","Thank you so much!":"Огромное спасибо!","I’m going to…":"Я собираюсь… (планы)","How about…?":"Как насчёт…? (предложение)","Let’s meet at…":"Давай встретимся в…","I’m going to wear…":"Я собираюсь надеть…","That sounds so cute!":"Звучит так мило!","Can’t wait!":"Не могу дождаться!","Spill the tea!":"Рассказывай сплетни!","No way!":"Не может быть!","I can’t believe it!":"Не могу поверить!","My lips are sealed!":"Я никому не скажу! (мои губы на замке)","I think we should…":"Думаю, нам стоит…","Talk later!":"Поговорим позже!"};
+function start(i){sc=SC[i];$('#pt').textContent=sc.e+' '+sc.t;$('#mis').innerHTML='🎯 <b>Твоя миссия:</b> '+sc.G.filter(g=>g.l).map(g=>g.l).join(' → ');const all=[...new Set(sc.steps.flatMap(s=>s.r.map(x=>x.ph)).filter(Boolean))];$('#pl').innerHTML=all.map(p=>`<div class="ph"><b>${p}</b><span>${TR[p]||''}</span></div>`).join('');scr('pre')}
+function begin(){score=0;n=0;got=new Set();done=new Set();tries={};M.innerHTML='';renderMs();$('#sc').textContent='⭐ 0';$('#av').textContent=sc.a;$('#nm').innerHTML=sc.n+'<small>● online</small>';$('#hp').innerHTML='';$('#chips').innerHTML='';$('#hint').classList.remove('open');scr('chat');say(0)}
+function bot(text,cb,hintStep){lock(true);const t=typing();setTimeout(()=>{t.remove();add('m bot',text);if(hintStep)setHint(hintStep);if(cb)cb()},750)}
+function setHint(st){$('#hp').innerHTML=st.h;$('#chips').innerHTML=st.c.map(c=>`<button class="chip">${c}</button>`).join('');$('#hint').classList.remove('open')}
+function say(i){cur=i;const st=sc.steps[i];bot(st.b,()=>lock(false),st)}
+$('#chips').onclick=e=>{const c=e.target.closest('.chip');if(c&&!locked){inp.value=c.textContent;inp.focus()}};
+$('#ht').onclick=()=>$('#hint').classList.toggle('open');
+const lev=(a,b)=>{const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return d[b.length]};
+function vocab(){return new Set(sc.steps.flatMap(s=>[s.b,s.h.replace(/<[^>]+>/g,''),...s.c,...s.r.map(x=>x.ph||'')]).join(' ').toLowerCase().replace(/[’‘]/g,"'").match(/[a-z']+/g))}
+function fix(t){const V=vocab();return t.split(/\s+/).map(w=>{const c=w.replace(/[^a-z']/g,'');if(c.length<4||V.has(c))return w;let best=null,bd=9;V.forEach(v=>{if(Math.abs(v.length-c.length)>1)return;const d=lev(c,v);if(d<bd){bd=d;best=v}});return best&&bd<=(c.length>=6?2:1)?best:w}).join(' ')}
+const usedPh=(r,t)=>!r.ph||t.replace(/[?!.,]/g,'').includes(r.ph.toLowerCase().replace(/[’‘]/g,"'").replace(/[…?!.]/g,'').trim());
+function renderMs(){$('#ms').innerHTML=(sc.G||[]).filter(g=>g.l).map(g=>`<span class="gl${done.has(g.id)?' ok':''}">${done.has(g.id)?'✅':'🎯'} ${g.l}</span>`).join('')}
+function newGoals(t,t2){const o=[];(sc.G||[]).forEach(g=>{if(!done.has(g.id)&&(!g.o||(sc.steps[cur]||{}).g===g.id)&&(g.k.test(t)||g.k.test(t2))){done.add(g.id);o.push(g)}});renderMs();return o}
+function send(){
+ const raw=inp.value.trim();if(!raw||locked)return;
+ add('m usr',raw);inp.value='';
+ if(/[а-яё]/i.test(raw)){const f=add('fb bad','Пиши, пожалуйста, по-английски 🇬🇧 Загляни в подсказку 💡 — там есть идеи!');return}
+ const t=raw.toLowerCase().replace(/[’‘]/g,"'"),st=sc.steps[cur];
+ const r0=st.r.find(x=>x.k.test(t)),t2=r0?t:fix(t),r=r0||(t2!==t?st.r.find(x=>x.k.test(t2)):null);
+ const words=t.split(/\s+/).length;
+ let p=words>=4?3:r?(words>=3?3:2):(words>=3?2:1),fb=r?(usedPh(r,t)?r.f:'Хорошо, по смыслу подходит! 💛')+(r0?'':' ✏️ Проверь написание: «'+t2.replace(/[?!.,]+$/,'')+'».'):(words>=3?'Ответ принят, тебя поняли 💛 Можно сказать и так: «'+st.c[0]+'»':'Принято! Попробуй ответить полным предложением 💛');
+ if(r&&words<3)p=2;
+ [...new Set(sc.steps.flatMap(s=>s.r.map(x=>x.ph)).filter(Boolean))].forEach(p=>{if(t.replace(/[?!.,]/g,'').includes(p.toLowerCase().replace(/[’‘]/g,"'").replace(/[…?!.]/g,'').trim()))got.add(p)});
+ score+=p;n++;$('#sc').textContent='⭐ '+score;
+ const f=add('fb'+(r?'':' bad'),fb);const b=document.createElement('b');b.textContent='+'+p+' ⭐';f.prepend(b);
+ lock(true);
+ setTimeout(()=>{
+  if(st.end){finish();return}
+  const nw=newGoals(t,t2),ack=nw.filter(g=>g.id!==st.g&&g.a).map(g=>g.a);
+  if(st.g&&!done.has(st.g)&&!tries[cur]){tries[cur]=1;bot((ack.length?ack.join(' ')+' ':'')+st.q,()=>lock(false));return}
+  let nx=cur+1;while(sc.steps[nx]&&!sc.steps[nx].end&&(done.has(sc.steps[nx].g)||(sc.steps[nx].sk&&done.has(sc.steps[nx].sk))))nx++;
+  if(ack.length)bot(ack.join(' '),()=>say(nx));else say(nx);
+ },700);
+}
+$('#go').onclick=send;inp.onkeydown=e=>{if(e.key==='Enter')send()};
+function finish(){
+ const ratio=score/(n*3),stars=ratio>.8?3:ratio>.5?2:1;
+ const all=[...new Set(sc.steps.flatMap(s=>s.r.map(x=>x.ph)).filter(Boolean))];
+ $('#stz').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+ $('#tot').textContent=score+' баллов';
+ const low=got.size<Math.ceil(all.length/2);$('#msg').textContent=(stars===3?'Ты настоящий Chat Master! 👑':stars===2?'Очень хорошо! 💪':'Хорошее начало! 🌱')+(low?' Ты справилась своими словами — это здорово! Но в словарике остались фразы, которые тоже можно использовать. Хочешь пройти чат ещё раз и попробовать их? 🔄':'');
+ $('#ck').innerHTML='<b>📝 Фразы из словарика ('+got.size+'/'+all.length+')</b>'+all.map(p=>`<div>${got.has(p)?'✅':'⬜'} ${p} <small>— ${TR[p]||''}</small></div>`).join('')+(low?'<div style="margin-top:6px">💡 Фразы с ⬜ можно вставить в разговор в следующий раз.</div>':'');
+ scr('res');
+}
+$('#back').onclick=()=>scr('menu');$('#begin').onclick=begin;$('#pback').onclick=()=>scr('menu');$('#home').onclick=()=>scr('menu');
+$('#again').onclick=()=>start(SC.indexOf(sc));
+</script>
+</body>
+</html>
